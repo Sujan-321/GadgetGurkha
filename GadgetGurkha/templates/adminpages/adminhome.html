@@ -1,0 +1,37 @@
+{% extends "adminpages/adminbase.html" %}
+{% block title %}Admin Home{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- <a href="{% url 'appGurkha:adminhome' %}">Home</a>
+        <a href="{% url 'appGurkha:home' %}" target="_blank">Visit Site</a> -->
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Pending Orders</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S.N</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Ordered On</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in pendingorders %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td><a href="{% url 'appGurkha:adminorderdetail' order.id %}">#ORDER_{{order.id}}</a></td>
+                            <td>{{order.ordered_by}}</td>
+                            <td>{{order.created_at}} ({{order.created_at|timesince}}) ago</td>
+                            <td>{{order.total}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

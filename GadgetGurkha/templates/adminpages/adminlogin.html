@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block title %}Login{% endblock %} 
+{% block content%}
+<style>
+  .errorlist {
+    color: red;
+  }
+  .container {
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 5px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(5%, 5%) scale(1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Change the shadow color and opacity as needed */
+  }
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col mx-auto">
+      <h4 style="margin-left: 0px">Admin Login</h4>
+      <hr />
+      <form action="" method="POST">
+        {% csrf_token %} {% if error%}
+        <span style="color: red">{{error}}</span>
+        {% endif %} {{form.as_p}}
+        <input class="btn btn-primary" type="submit" value="Login" />
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
