@@ -33,7 +33,7 @@ class HomeView(EcomMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         # context['myname'] = "Sujan Ghimire"
         all_products = Product.objects.all().order_by("-id")
-        paginator = Paginator(all_products, 4)
+        paginator = Paginator(all_products, 15)
         page_number = self.request.GET.get('page')
         product_list = paginator.get_page(page_number)
         context['product_list'] = product_list     # this will help to see the current upload product at the top

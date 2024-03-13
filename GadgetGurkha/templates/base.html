@@ -56,17 +56,20 @@
     <!-- Navbar content -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'appGurkha:home' %}">
-          <a class="navbar-brand" href="{% url 'appGurkha:home' %}">
-            <div class="logo-container">
+        <div class="logo-container">
+            <a class="navbar-brand" href="{% url 'appGurkha:home' %}">
+              {% comment %} border:2px solid black; {% endcomment %}
               <img
-                src="{% static 'logo/GadgetGurkhaLogo.png' %}"
-                class="img-fluid logo-image"
-                alt="GadgetGurkha Logo"
+              src="{% static 'logo/GadgetGurkhaLogo.png' %}"
+              class="img-fluid logo-image"
+              alt="GadgetGurkha Logo"
+              style=" border-radius: 41px"
               />
+            </a>
+            <a class="navbar-brand" href="{% url 'appGurkha:home' %}">
               <span class="logo-text">GadgetGurkha</span>
+            </a>
             </div>
-          </a>
         <button
           class="navbar-toggler"
           type="button"
@@ -224,6 +227,30 @@
       </div>
     </nav>
     <hr />
+    
     {% block content %} {% endblock %}
+    <div class="footer" style="margin-top:200px;">
+      <footer class="bg-dark text-white py-4">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <h5>Contact Us</h5>
+              <p>Email: info@gadgetgurkha.com</p>
+              <p>Phone: +1 (123) 456-7890</p>
+              <p>Address: 123 Main Street, City, Country</p>
+            </div>
+            <div class="col-md-6">
+              <h5>Follow Us</h5>
+              <ul class="list-unstyled">
+                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div
   </body>
 </html>
