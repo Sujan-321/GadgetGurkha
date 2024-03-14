@@ -1,8 +1,49 @@
-<html>
-<head>
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Khalti Request{% endblock %}
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        text-align: center;
+    }
+
+    h3 {
+        color: #333;
+    }
+
+    button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    a {
+        color: #4CAF50;
+        text-decoration: none;
+        margin-top: 20px;
+        display: block;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
     <script src="https://khalti.s3.ap-south-1.amazonaws.com/KPG/dist/2020.12.17.0.0.0/khalti-checkout.iffe.js"></script>
-</head>
-<body>
+
     <h3>Your order amount is Rs. {{order.total}}</h3>
     <!-- Place this where you need payment button -->
     <button id="payment-button">Pay with Khalti</button>
@@ -62,5 +103,4 @@
         }
     </script>
     <!-- Paste this code anywhere in you body tag -->
-</body>
-</html>
+{% endblock %}

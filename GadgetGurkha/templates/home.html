@@ -1,16 +1,27 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content%}
+{% extends 'base.html' %} 
+{% block title %}Home{% endblock %} 
+{% block content%}
+<style>
+  /* Hover effect for product card */
+  .product-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+    transform: translateY(-5px); /* Move the card slightly up */
+}
+</style>
 <div class="container">
-  <h1 class="text-center">Welcome to GadgetGurkha</h1>
-  <hr />
+  <!-- <h1 class="text-center">Welcome to GadgetGurkha</h1>
+  <hr /> -->
   <div style="margin-left: 1px" class="row mt-3">
     {% for p in product_list %}
     <div
-      class="col-md-3"
+      class="col-md-3 product-card"
       style="
         max-width: 250px;
-        border: 0.5px solid black;
+        
         padding-right: 10px;
         margin: 2px;
+        margin-bottom: 10px!important; border-radius: 17px;
+        transition: all 0.3s ease; /* Add smooth transition */
       "
     >
       <div class="m-1" style="max-width: 256px">

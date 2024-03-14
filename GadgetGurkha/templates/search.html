@@ -53,10 +53,10 @@
           <p>{{result.description|truncatewords:70}}</p>
           <p>Return Policy: {{result.return_policy}}</p>
           {% if request.user.customer %}
-            <a href="{% url 'appGurkha:addtocart' product.id %}" class="btn btn-info">Add To Cart</a><hr/>
+            <a href="{% url 'appGurkha:addtocart' result.id %}" class="btn btn-info">Add To Cart</a><hr/>
             {% else %}
             <a href="{% url 'appGurkha:customerlogin' %}" class="btn btn-primary">Add To Cart</a>
-            {% endif %}
+          {% endif %}
         </div>
       </div>
       {% endfor %}
