@@ -2,11 +2,16 @@
 {% load humanize %}
 {% block title %}Khalti Request{% endblock %}
 {% block content %}
+{% load static %}
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-image: url("{% static 'backgroundImages/paymentbackground.jpg' %}");
+        background-size: cover; /* Ensure the image covers the entire background */
+        background-repeat: no-repeat; /* Prevent the image from repeating */
+        background-position: center; /* Center the image horizontally and vertically */
         text-align: center;
+        height: 1000px;
     }
 
     h3 {
@@ -14,7 +19,6 @@
     }
 
     button {
-        background-color: #4CAF50;
         border: none;
         color: white;
         padding: 15px 32px;
@@ -38,20 +42,32 @@
         display: block;
     }
 
-    a:hover {
-        text-decoration: underline;
+    .payInfo{
+        background-color: #f4f4f4;
+        border: 2px solid black;
+        height: 301px;
+        width: 300px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); /* Add box shadow */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center items horizontally */
+        align-items: center; /* Center items vertically */
+        padding: 20px;
+        margin-top: 146px;
+        margin-left: 631px;
     }
 </style>
     <script src="https://khalti.s3.ap-south-1.amazonaws.com/KPG/dist/2020.12.17.0.0.0/khalti-checkout.iffe.js"></script>
 
-    <h3>Your order amount is Rs. {{order.total}}</h3>
-    <!-- Place this where you need payment button -->
-    <button id="payment-button">Pay with Khalti</button>
-    <a href="">Go to Home Page</a>
-    <!-- Place this where you need payment button -->
-    <!-- Paste this code anywhere in you body tag -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
-    <script>
+    <div class="payInfo">
+        <h3>Your order amount is Rs. {{order.total|intcomma}} /-</h3>
+        <!-- Place this where you need payment button -->
+        <button class="btn btn-primary" id="payment-button">Pay with Khalti</button>
+        <a href="{% url 'appGurkha:home' %}">Go to Home Page</a>
+        <!-- Place this where you need payment button -->
+        <!-- Paste this code anywhere in you body tag -->
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+        <script>
         var config = {
             // replace the publicKey with yours
             "publicKey": "test_public_key_f8d0e04729b1475e876d672b40089694",
@@ -99,8 +115,9 @@
         var btn = document.getElementById("payment-button");
         btn.onclick = function () {
             // minimum transaction amount must be 10, i.e 1000 in paisa.
-            checkout.show({amount: {{order.total}}*100});
+            checkout.show({amount: {{order.total}} *100});
         }
     </script>
     <!-- Paste this code anywhere in you body tag -->
+</div>
 {% endblock %}
