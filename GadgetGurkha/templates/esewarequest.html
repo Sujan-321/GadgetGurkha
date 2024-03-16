@@ -1,0 +1,33 @@
+{% comment %} {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Khalti Request{% endblock %}
+{% block content %}
+
+{% endblock %} {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="https://uat.esewa.com.np/epay/main" method="POST">
+    <input value="{{order.total}}" name="tAmt" type="text">
+    <input value="{{order.total}}" name="amt" type="text">
+    <input value="0" name="txAmt" type="text">
+    <input value="0" name="psc" type="text">
+    <input value="0" name="pdc" type="text">
+    <input value="EPAYTEST" name="scd" type="text">
+    <input value="order_{{order.id}}" name="pid" type="text">
+    <!-- ee2c3ca1-696b-4cc5-a6be-2c40d929d453 -->
+    <!-- merchant.com.np/page/esewa_payment_success?q=su -->
+    <!-- http://merchant.com.np/page/esewa_payment_failed?q=fu -->
+    <input value="http://127.0.0.1:8000" type="text" name="su">
+    <input value="{{request.build_absolute_uri}}" type="text" name="fu">  <!-- this code helps in case of 'fail' then system auto render to the current url from where user request-->
+    <input value="Submit" type="submit">
+    </form>
+</body> 
+</html>

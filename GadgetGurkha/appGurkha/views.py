@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import *  # This is where we import 'generics' such as {TemplateView, View, CreateView, FormView, DetailView, ListView}
 from .models import *
 from .forms import *
@@ -333,22 +333,45 @@ class CustomerLogoutView(View):
         return redirect("appGurkha:home")
 
 class CustomerLoginView(FormView):
-    template_name = 'customerlogin.html' 
+    template_name = 'customerlogin.html'  # You can adjust this template as needed
     form_class = CustomerLoginForm
-    success_url = reverse_lazy("appGurkha:home")
+    success_url_customer = reverse_lazy("appGurkha:home")  # Redirect URL for customers
+    success_url_admin = reverse_lazy("appGurkha:adminhome")  # Redirect URL for admins
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'form': self.form_class()})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                if hasattr(user, 'customer'):
+                    return redirect(self.success_url_customer)
+                elif hasattr(user, 'admin'):
+                    return redirect(self.success_url_admin)
+            else:
+                messages.error(request, 'Invalid username or password.')
+        return render(request, self.template_name, {'form': form})
+    # template_name = 'customerlogin.html' 
+    # form_class = CustomerLoginForm
+    # success_url = reverse_lazy("appGurkha:home")
     
-    # form_valid method is a type of 'POST' method, is available in 'CreateView', 'FormView' and 'UpdateView' only
-    def form_valid(self, form):
-        uname = form.cleaned_data.get("username") # username is the field name here
-        pword = form.cleaned_data.get("password")
-        usr = authenticate(username=uname, password=pword)
+    # # form_valid method is a type of 'POST' method, is available in 'CreateView', 'FormView' and 'UpdateView' only
+    # def form_valid(self, form):
+    #     uname = form.cleaned_data.get("username") # username is the field name here
+    #     pword = form.cleaned_data.get("password")
+    #     usr = authenticate(username=uname, password=pword)
         
-        if usr is not None and Customer.objects.filter(user=usr).exists():
-            login(self.request, usr)
-        else:
-            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid Credentials"})
+    #     if usr is not None and Customer.objects.filter(user=usr).exists():
+    #         login(self.request, usr)
+    #     else:
+    #         return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid Credentials"})
         
-        return super().form_valid(form)
+    #     return super().form_valid(form)
 
 class AboutView(EcomMixin, TemplateView):
     template_name = "about.html"
@@ -474,6 +497,11 @@ class AdminProductListView(AdminRequiredMixin, ListView):
     queryset = Product.objects.all().order_by("-id")
     context_object_name = "allproducts"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_id'] = self.kwargs.get('product_id')  # Add this line
+        return context
+
 class AdminProductCreateView(AdminRequiredMixin, CreateView):
     template_name = "adminpages/adminproductcreate.html"
     form_class = ProductForm
@@ -488,8 +516,33 @@ class AdminProductCreateView(AdminRequiredMixin, CreateView):
             
         return super().form_valid(form)
     
-    
-    
+class AdminProductEditView(View):
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductEditForm(instance=product)
+        return render(request, 'adminpages/adminproductedit.html', {'form': form, 'product': product})
+
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductEditForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('appGurkha:adminproductlist')
+        return render(request, 'adminpages/adminproductedit.html', {'form': form, 'product': product})
+
+
+#product delete
+class AdminProductDeleteView(AdminRequiredMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('appGurkha:adminproductlist')
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        if pk:
+            product = Product.objects.get(pk=pk)
+            product.delete()
+        return redirect('appGurkha:adminproductlist')
+
     
 # forget Password for customer
 class PasswordForgetView(FormView):

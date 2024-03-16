@@ -64,6 +64,25 @@ class ProductForm(forms.ModelForm):
             "warrenty": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Warrenty Period'}),
             "return_policy": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Return Policy'}),
         }
+        
+class ProductEditForm(forms.ModelForm):
+    more_images = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control', 'multiple': False}))
+    
+    class Meta:
+        model = Product
+        fields = ["title", "slug", "category", "image", "marked_price", "selling_price", "description", "warrenty", "return_policy"]
+
+        widgets = {
+            "title": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Title'}),
+            "slug": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Slug'}),
+            "category": forms.Select(attrs={'class': 'form-control'}),
+            "image": forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            "marked_price": forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Marked Price'}),
+            "selling_price": forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Selling Price'}),
+            "description": forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Product Description', 'rows': 5}),
+            "warrenty": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Warranty'}),
+            "return_policy": forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Product Return Policy'}),
+        }
 
 # for forget password
 class PasswordForgetForm(forms.Form):

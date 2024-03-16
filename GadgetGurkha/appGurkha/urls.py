@@ -29,7 +29,10 @@ urlpatterns = [
     path("admin-order-<int:pk>-change/", AdminOrdersStatusChangeView.as_view(), name="adminorderstatuschange"),
     path("admin-product/list/", AdminProductListView.as_view(), name="adminproductlist"),
     path("admin-product/add/", AdminProductCreateView.as_view(), name="adminproductcreate"),
+    path('admin-product/edit/<int:product_id>/', AdminProductEditView.as_view(), name='admin-product-edit'),
+    path('admin-product/delete/<int:pk>/', AdminProductDeleteView.as_view(), name='adminproductdelete'),
 
+    
     #payment request from "khalti"
     path("khalti-request/", KhaltiRequestView.as_view(), name="khaltirequest"),
     path("khalti-verify/", KhaltiVerifyView.as_view(), name="khaltiverify"),

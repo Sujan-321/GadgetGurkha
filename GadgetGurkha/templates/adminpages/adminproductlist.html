@@ -1,11 +1,11 @@
 {% extends 'adminpages/adminbase.html' %}
 {% block title %}Products Details{% endblock %} 
-{%block content %}
+{% block content %}
 <div class="container">
   <div class="row">
     <div class="col-md-12">
       <h3>All product list</h3>
-      <a href="{% url 'appGurkha:adminproductcreate' %}">Add New Product</a>
+      <a class="btn btn-primary" href="{% url 'appGurkha:adminproductcreate' %}">Add New Product</a>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -14,6 +14,7 @@
             <th>Image</th>
             <th>Price</th>
             <th>Views</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -24,6 +25,13 @@
             <td><img src="{{p.image.url}}" style="height: 60px" alt="" /></td>
             <td>{{p.selling_price}}</td>
             <td>{{p.view_count}}</td>
+            <td>
+              <a href="{% url 'appGurkha:admin-product-edit' product_id=p.id %}" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+              <form action="{% url 'appGurkha:adminproductdelete' pk=p.id %}" method="post" style="display: inline-block;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete \'{{ p.title }}\'?')"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -31,4 +39,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}
