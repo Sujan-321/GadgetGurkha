@@ -31,7 +31,6 @@ urlpatterns = [
     path("admin-product/add/", AdminProductCreateView.as_view(), name="adminproductcreate"),
     path('admin-product/edit/<int:product_id>/', AdminProductEditView.as_view(), name='admin-product-edit'),
     path('admin-product/delete/<int:pk>/', AdminProductDeleteView.as_view(), name='adminproductdelete'),
-
     
     #payment request from "khalti"
     path("khalti-request/", KhaltiRequestView.as_view(), name="khaltirequest"),
