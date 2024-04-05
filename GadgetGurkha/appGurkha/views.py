@@ -59,51 +59,46 @@ class ProductDetailView(EcomMixin, TemplateView):
         context['product']=product
         return context
 
-class AddToCartView(EcomMixin, TemplateView):
-    template_name = "addtocart.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # get product id from requested url
+class AddToCartView(EcomMixin, View):
+    def get(self, request, *args, **kwargs):
+        # Get product id from requested URL
         product_id = self.kwargs['pro_id']
-        print(product_id, "********")
         
+        # Get product
+        product_obj = get_object_or_404(Product, id=product_id)
         
-        #get product
-        product_obj = Product.objects.get(id=product_id)
+        # Check if product exists
+        if product_obj:
+            # Add product to cart logic goes here
+            cart_id = request.session.get("cart_id")
+            if cart_id:
+                cart_obj = Cart.objects.get(id=cart_id)
+                this_product_in_cart = cart_obj.cartproduct_set.filter(product=product_obj)
 
-        #check wheather cart exits
-        cart_id = self.request.session.get("cart_id", None)
-        if cart_id:
-            cart_obj = Cart.objects.get(id=cart_id)
-            # print("old cart")
-            this_product_in_cart = cart_obj.cartproduct_set.filter(product=product_obj)
-
-            #Items already exists in cart
-            if this_product_in_cart.exists():
-                cartproduct = this_product_in_cart.last()
-                cartproduct.quantity += 1
-                cartproduct.subtotal += product_obj.selling_price
-                cartproduct.save()
-                cart_obj.total += product_obj.selling_price
-                cart_obj.save()
-                # new item is added in cart
-                
+                # Item already exists in cart
+                if this_product_in_cart.exists():
+                    cartproduct = this_product_in_cart.last()
+                    cartproduct.quantity += 1
+                    cartproduct.subtotal += product_obj.selling_price
+                    cartproduct.save()
+                    cart_obj.total += product_obj.selling_price
+                    cart_obj.save()
+                else:
+                    cartproduct = CartProduct.objects.create(cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
+                    cart_obj.total += product_obj.selling_price
+                    cart_obj.save()
             else:
-                cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
+                cart_obj = Cart.objects.create(total=0)
+                request.session['cart_id'] = cart_obj.id
+                cartproduct = CartProduct.objects.create(cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
                 cart_obj.total += product_obj.selling_price
                 cart_obj.save()
-
-        else:
-            cart_obj = Cart.objects.create(total=0)
-            self.request.session['cart_id'] = cart_obj.id
-            # print("new cart")
-            cartproduct = CartProduct.objects.create(cart=cart_obj, product = product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
-            cart_obj.total += product_obj.selling_price
-            cart_obj.save()
-
-        #check if product already exists in cart
-        return context
+            
+            # Redirect user to home page
+            return redirect("appGurkha:home")
+        
+        # Handle invalid product ID, for example, redirect to home
+        return redirect("appGurkha:home")
 
 class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
@@ -596,4 +591,3 @@ class PasswordResetView(FormView):
         user.set_password(password)
         user.save()
         return super().form_valid(form)
-    

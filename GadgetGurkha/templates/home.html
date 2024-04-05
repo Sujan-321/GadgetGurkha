@@ -5,7 +5,38 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
     transform: translateY(-5px); /* Move the card slightly up */
   }
+
+  .success-label {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+  }
 </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    console.log("Document ready"); // Check if document is ready
+    $("#addToCartBtn").click(function (event) {
+      // Display a success message using alert()
+      alert("Product added to cart successfully!");
+      
+      // Prevent the default behavior of the anchor tag
+      //event.preventDefault();
+
+      // Optionally, you can navigate to the cart page after displaying the success message
+      // window.location.href = $(this).attr("href");
+    });
+  });
+</script>
+
+
+<div id="successLabel" class="success-label">Success</div>
 <div class="container">
   <!-- <h1 class="text-center">Welcome to GadgetGurkha</h1>
   <hr /> -->
@@ -15,7 +46,6 @@
       class="col-md-3 product-card"
       style="
         max-width: 250px;
-        
         padding-right: 10px;
         margin: 2px;
         margin-bottom: 10px !important;
@@ -54,15 +84,20 @@
             <strike>Rs. {{p.marked_price}}</strike> Rs.{{p.selling_price}}
           </p>
           {% if request.user.customer %}
-          <a href="{% url 'appGurkha:addtocart' p.id %}" class="btn btn-primary"
-            >Add To Cart</a
-          >
+          <a href="{% url 'appGurkha:addtocart' p.id %}"
+            ><button id="addToCartBtn" class="btn btn-primary">
+              Add To Cart
+            </button></a>
           {% else %}
           <a href="{% url 'appGurkha:customerlogin' %}" class="btn btn-primary"
             >Add To Cart</a
           >
           {% endif %} {% if request.user.admin %}
-          <a href="{% url 'appGurkha:admin-product-edit' product_id=p.id %}" class="btn btn-warning">Edit</a>
+          <a
+            href="{% url 'appGurkha:admin-product-edit' product_id=p.id %}"
+            class="btn btn-warning"
+            >Edit</a
+          >
 
           {% endif %}
         </div>
@@ -80,7 +115,8 @@
           >Previous</a
         >
       </li>
-      {% endif %} {% for i in product_list.paginator.page_range %} 
+      {% endif %}
+      {% for i in product_list.paginator.page_range %}
       {% if i == product_list.number %}
       <li class="page-item active"><a class="page-link">{{i}}</a></li>
       {% else %}
@@ -100,4 +136,5 @@
     </ul>
   </nav>
 </div>
+
 {% endblock %}
