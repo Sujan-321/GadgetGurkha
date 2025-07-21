@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Khalti Request{% endblock %}
+{% block content %}
+{% load static %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url("{% static 'backgroundImages/paymentbackground.jpg' %}");
+        background-size: cover; /* Ensure the image covers the entire background */
+        background-repeat: no-repeat; /* Prevent the image from repeating */
+        background-position: center; /* Center the image horizontally and vertically */
+        text-align: center;
+        height: 1000px;
+    }
+
+    h3 {
+        color: #333;
+    }
+
+    button {
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    a {
+        color: #4CAF50;
+        text-decoration: none;
+        margin-top: 20px;
+        display: block;
+    }
+
+    .payInfo{
+        background-color: #f4f4f4;
+        border: 2px solid black;
+        height: 301px;
+        width: 300px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5); /* Add box shadow */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center items horizontally */
+        align-items: center; /* Center items vertically */
+        padding: 20px;
+        margin-top: 146px;
+        margin-left: 631px;
+    }
+</style>
+    <script src="https://khalti.s3.ap-south-1.amazonaws.com/KPG/dist/2020.12.17.0.0.0/khalti-checkout.iffe.js"></script>
+
+    <div class="payInfo">
+        <h3>Your order amount is Rs. {{order.total|intcomma}} /-</h3>
+        <!-- Place this where you need payment button -->
+        <button class="btn btn-primary" id="payment-button">Pay with Khalti</button>
+        <a href="{% url 'appGurkha:home' %}">Go to Home Page</a>
+        <!-- Place this where you need payment button -->
+        <!-- Paste this code anywhere in you body tag -->
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+        <script>
+        var config = {
+            // replace the publicKey with yours
+            "publicKey": "test_public_key_",
+            "productIdentity": "order_{{order.id}}",
+            "productName": "order_{{order.id}}",
+            "productUrl": "http://localhost:8000",
+            "paymentPreference": [
+                "KHALTI",
+                "EBANKING",
+                "MOBILE_BANKING",
+                "CONNECT_IPS",
+                "SCT",
+                ],
+            "eventHandler": {
+                onSuccess (payload) {
+                    // hit merchant api for initiating verfication
+                    axios.get("/khalti-verify/", {
+                        params:{
+                            "token": payload.token,
+                            "amount": payload.amount,
+                            "order_id": "{{order.id}}"
+                        }
+                    }).then(function(resp){
+                        if(resp.data.success == true){
+                            alert("Thanks, Payment Completed Successfully")
+                            location.href = "/"
+                        }
+                        else{
+                            alert("Sorry, Error occurred during payment!")
+                            location.href = "{{ request.build_absolute_uri }}"
+
+                        }
+                    })
+                },
+                onError (error) {
+                    console.log(error);
+                },
+                onClose () {
+                    console.log('widget is closing');
+                }
+            }
+        };
+
+        var checkout = new KhaltiCheckout(config);
+        var btn = document.getElementById("payment-button");
+        btn.onclick = function () {
+            // minimum transaction amount must be 10, i.e 1000 in paisa.
+            checkout.show({amount: {{order.total}} *100});
+        }
+    </script>
+    <!-- Paste this code anywhere in you body tag -->
+</div>
+{% endblock %}

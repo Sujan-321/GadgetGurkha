@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}My Cart{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4">Items in My Cart</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead class="bg-primary text-white">
+                        <tr>
+                            <th style="color:white;" scope="col">S.N</th>
+                            <th style="color:white;" scope="col">Product</th>
+                            <th style="color:white;" scope="col">Rate</th>
+                            <th style="color:white;" scope="col">Quantity</th>
+                            <th style="color:white;" scope="col">Subtotal</th>
+                            <th style="color:white;" scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cp in cart.cartproduct_set.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ cp.product.title }}</td>
+                            <td>Rs. {{ cp.rate }}</td>
+                            <td>{{ cp.quantity }}</td>
+                            <td>Rs. {{ cp.subtotal|intcomma }}/-</td>
+                            <td>
+                                <a href="{% url 'appGurkha:managecart' cp.id %}?action=inc" class="btn btn-sm btn-primary me-2"><i class="fas fa-plus"></i></a>
+                                <a href="{% url 'appGurkha:managecart' cp.id %}?action=dcr" class="btn btn-sm btn-warning me-2"><i class="fas fa-minus"></i></a>
+                                <a href="{% url 'appGurkha:managecart' cp.id %}?action=rmv" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Your cart is empty</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-end">
+                <h4>Total: Rs. {{ cart.total|intcomma }}/-</h4>
+                {% if cart.cartproduct_set.all %}
+                <a href="{% url 'appGurkha:clearcart' %}" class="btn btn-danger mt-3">Clear Cart</a>
+                <a href="{% url 'appGurkha:checkout' %}" class="btn btn-success mt-3">Checkout</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

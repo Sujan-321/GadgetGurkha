@@ -1,0 +1,101 @@
+{% extends "adminpages/adminbase.html" %}
+{% load humanize %}
+{% block title %}Order Detail{% endblock %}
+
+{% block content %}
+<style>
+    .orderDetail, .orderItems {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .orderDetail h3, .orderItems h4 {
+        color: #007bff;
+    }
+    .orderDetail p span {
+        font-weight: bold;
+        color: #6c757d;
+    }
+    .orderItems table {
+        width: 100%;
+    }
+    .orderItems table th {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+    .orderItems table th, .orderItems table td {
+        padding: 12px;
+        text-align: left;
+    }
+    .orderItems table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    .orderItems table tbody tr:hover {
+        background-color: #e2e6ea;
+    }
+    .orderItems table th:last-child, .orderItems table td:last-child {
+        text-align: right;
+    }
+    .orderItems form {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <div style="margin: 20px;" class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="orderDetail">
+                <h3>Order Detail</h3>
+                <p><span>Order ID:</span> #ORDER_{{ ord_obj.id }}</p>
+                <p><span>Order Status:</span> {{ ord_obj.order_status }}</p>
+                <p><span>Order On:</span> {{ ord_obj.created_at }} ({{ ord_obj.created_at|timesince }}) ago</p>
+                <p><span>Customer Information:</span> By {{ ord_obj.ordered_by }}, {{ ord_obj.mobile }}</p>
+                <p><span>Shipping Address:</span> From {{ ord_obj.shipping_address }}, ({{ ord_obj.email }})</p>
+                <p><span>Payment Information:</span> Using {{ ord_obj.payment_method }}, ({% if ord_obj.payment_completed %}Payment Completed{% else %}Not Paid{% endif %})</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="orderItems">
+                <h4>Ordered Items</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S.N</th>
+                            <th>Item</th>
+                            <th>Rate</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cp in ord_obj.cart.cartproduct_set.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a target="_blank" href="{% url 'appGurkha:productdetail' cp.product.slug %}">{{ cp.product.title }} ({{ cp.product.id }})</a></td>
+                            <td>{{ cp.rate }}</td>
+                            <td>{{ cp.quantity }}</td>
+                            <td>{{ cp.subtotal }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th colspan="4" class="text-right">Total:</th>
+                            <th>Rs. {{ ord_obj.total|intcomma }}/-</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <form method="POST" action="{% url 'appGurkha:adminorderstatuschange' ord_obj.id %}">
+                    {% csrf_token %}
+                    <select name='status'>
+                        {% for i, j in allstatus %}
+                        <option value="{{ i }}" {% if i == ord_obj.order_status %}selected{% endif %}>{{ j }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-info">Change</button>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

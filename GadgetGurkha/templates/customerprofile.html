@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %} 
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.cancel-order-btn').on('click', function() {
+            var orderId = $(this).data('order-id');
+            $.ajax({
+                url: '/cancel-order/',
+                method: 'POST',
+                data: {
+                    order_id: orderId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // If successful, update the UI
+                    // You may want to reload the page or update specific elements dynamically
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    /* Style for detail information section */
+    .detail-info {
+        background-color: #f8f9fa; /* Light gray background */
+        padding: 20px; /* Add padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+    }
+
+    /* Style for profile details */
+    .profile-detail {
+        font-weight: bold; /* Bold text */
+        margin-bottom: 10px; /* Add space between profile details */
+    }
+
+    /* Style for previous orders section */
+    .previous-orders {
+        margin-top: 30px; /* Add space above previous orders */
+    }
+
+    /* Style for table */
+    .order-table {
+        border: 1px solid #dee2e6; /* Light border */
+        border-radius: 10px; /* Rounded corners */
+        overflow: hidden; /* Hide overflow content */
+    }
+
+    /* Style for table head */
+    .order-table thead {
+        background-color: #007bff; /* Blue background color */
+        color: #fff; /* White text color */
+    }
+
+    /* Style for table body */
+    .order-table tbody {
+        background-color: #fff; /* White background color */
+    }
+
+    /* Style for table rows */
+    .order-table tbody tr {
+        transition: background-color 0.3s ease; /* Add smooth transition */
+    }
+
+    /* Hover effect for table rows */
+    .order-table tbody tr:hover {
+        background-color: #f2f2f2; /* Light gray background on hover */
+    }
+</style>
+
+<div class="container">
+    <div style="margin-top:56px;" class="row">
+        <div class="col-md-4 detail-info">
+            <h3>Detail Information</h3>
+            <p class="profile-detail"><span>Name:</span> {{ customer.full_name }}</p>
+            <p class="profile-detail"><span>Username:</span> {{ customer.user.username }}</p>
+            <p class="profile-detail"><span>Email:</span> {{ customer.user.email }}</p>
+            <p class="profile-detail"><span>Address:</span> {{ customer.address }}</p>
+            <p class="profile-detail"><span>Joined On:</span> {{ customer.joined_on }}</p>
+        </div>
+        <div class="col-md-8 previous-orders">
+            <h3>Previous Orders</h3>
+            <hr>
+            <table class="table order-table">
+                <thead>
+                    <tr>
+                        <th style="color:white;">S.N</th>
+                        <th style="color:white;">Order Id</th>
+                        <th style="color:white;">Amount</th>
+                        <th style="color:white;">Ordered On</th>
+                        <th style="color:white;">Status</th>
+                        <th style="color:white;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ord in orders %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'appGurkha:customerorderdetail' ord.pk %}">#Order_{{ ord.id }}</a></td>
+                        <td>{{ ord.total }}</td>
+                        <td>{{ ord.created_at|timesince }} ago</td>
+                        <td>{{ ord.order_status }}</td>
+                        <td><button class="btn btn-danger cancel-order-btn" data-order-id="{{ ord.id }}">Cancel</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

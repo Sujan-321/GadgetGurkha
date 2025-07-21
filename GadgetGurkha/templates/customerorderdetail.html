@@ -1,0 +1,130 @@
+{% extends 'base.html' %} 
+{% load humanize %}
+{% block title %}Order Detail{% endblock %} 
+{% block content %}
+<style>
+    /* Style for order detail section */
+    .orderDetail {
+        background-color: #f8f9fa; /* Light gray background */
+        padding: 20px; /* Add padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+        margin-bottom: 40px; /* Add space between sections */
+    }
+
+    /* Style for order detail heading */
+    .orderDetail h3 {
+        margin-bottom: 20px; /* Add space below heading */
+        color: #007bff; /* Blue text color */
+    }
+
+    /* Style for order detail items section */
+    .orderItems {
+        background-color: #fff; /* White background */
+        padding: 20px; /* Add padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+    }
+
+    /* Style for table */
+    .orderItems table {
+        margin-top: 20px; /* Add space above table */
+        border: 1px solid #dee2e6; /* Light border */
+        border-radius: 10px; /* Rounded corners */
+    }
+
+    /* Style for table head */
+    .orderItems table thead {
+        background-color: #007bff; /* Blue background color */
+        color: #fff; /* White text color */
+    }
+
+    /* Style for table body */
+    .orderItems table tbody {
+        background-color: #fff; /* White background color */
+    }
+
+    /* Style for table rows */
+    .orderItems table tbody tr {
+        transition: background-color 0.3s ease; /* Add smooth transition */
+    }
+
+    /* Hover effect for table rows */
+    .orderItems table tbody tr:hover {
+        background-color: #f2f2f2; /* Light gray background on hover */
+    }
+
+    /* Style for total row */
+    .orderItems table tbody .total-row th {
+        text-align: right; /* Align text to the right */
+    }
+
+    /* Style for total amount */
+    .orderItems table tbody .total-amount {
+        font-weight: bold; /* Bold text */
+    }
+
+    /* Style for main container */
+    .main-container {
+        display: flex; /* Use flexbox */
+        justify-content: space-between; /* Space between sections */
+    }
+
+    /* Style for order detail section in the left */
+    .orderDetail {
+        flex-basis: 45%; /* 45% width */
+    }
+
+    /* Style for order items section in the right */
+    .orderItems {
+        flex-basis: 50%; /* 50% width */
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md mx-auto">
+            <div style="max-width:2000px; margin-top:76px;" class="main-container">
+                <div class="orderDetail">
+                    <h3>Order Detail</h3>
+                    <p><span>Order ID:</span> #ORDER_{{ ord_obj.id }}</p>
+                    <p><span>Order Status:</span> {{ ord_obj.order_status }}</p>
+                    <p><span>Order On:</span> {{ ord_obj.created_at }} ({{ ord_obj.created_at|timesince }} ago)</p>
+                    <p><span>Customer Information:</span> By {{ ord_obj.ordered_by }}, {{ ord_obj.mobile }}</p>
+                    <p><span>Shipping Address:</span> From {{ ord_obj.shipping_address }}, ({{ ord_obj.email }})</p>
+                </div>
+                
+                <div class="orderItems">
+                    <h4>Ordered Items</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="color:white;">S.N</th>
+                                <th style="color:white;">Item</th>
+                                <th style="color:white;">Rate</th>
+                                <th style="color:white;">Quantity</th>
+                                <th style="color:white;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cp in ord_obj.cart.cartproduct_set.all %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><a target="_blank" href="{% url 'appGurkha:productdetail' cp.product.slug %}">{{ cp.product.title }}</a></td> {% comment %} ({{ cp.product.id }}) {% endcomment %}
+                                <td>{{ cp.rate }}</td>
+                                <td>{{ cp.quantity }}</td>
+                                <td>{{ cp.subtotal }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="total-row">
+                                <th colspan="4" class="text-right">Total:</th>
+                                <th class="total-amount">Rs. {{ ord_obj.total|intcomma }}/-</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
